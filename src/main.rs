@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use ignore::Walk;
 use std::path::PathBuf;
 use std::process;
 use structopt::StructOpt;
@@ -57,7 +58,20 @@ fn main() {
         }
     };
 
-    let resava = Resava::new(cli.source, cli.targets, cli.similarity / 100.);
+    // Walk directories recursively
+    let targets: Vec<_> = cli
+        .targets
+        .into_iter()
+        .flat_map(|path| {
+            Walk::new(path)
+                .into_iter()
+                .filter_map(|entry| entry.ok())
+                .filter(|entry| entry.file_type().map_or(false, |e| e.is_file()))
+                .map(|entry| entry.into_path())
+        })
+        .collect();
+
+    let resava = Resava::new(cli.source, targets, cli.similarity / 100.);
 
     for result in &resava.run(preprocessor.as_deref()) {
         match result {
