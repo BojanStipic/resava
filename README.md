@@ -2,26 +2,41 @@
 
 Plagiarism detection for source code.
 
-## Compiling from source
+## Plagiarism detection
 
-### Prerequisites
+Plagiarism is detected using the following steps:
 
-* Rust compiler
+1. Input preprocessing:
+    * Whitespace normalization
+    * Letter case normalization
+    * Language dependent preprocessing. Currently supported languages:
+        * x86 GAS assembly
+2. Similarity check using string metric algorithm. Currently supported algorithms:
+    * Normalized [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
 
-### Compile and install with Cargo:
+## Installation options
+
+### Download precompiled binaries
+
+Precompiled binaries are available on [Releases](https://github.com/BojanStipic/resava/releases) page.
+Currently only `x86_64-unknown-linux-gnu` targets are supported.
+
+### Compiling from source
+
+#### Prerequisites
+
+* [Rust language toolchain](https://www.rust-lang.org/tools/install)
+
+#### Compile and install with Cargo:
 
 ```bash
 cargo build --release
 cargo install --path .
 ```
 
-## Download precompiled binary
-
-Alternatively, precompiled binaries are available on [Release](https://github.com/BojanStipic/resava/releases) page.
-
 ## Usage
 
-```bash
+```
 USAGE:
     resava [OPTIONS] <source> [targets]...
 
