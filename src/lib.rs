@@ -23,7 +23,7 @@ use preprocessors::Preprocessor;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-    #[error("`{0}` -- IO error: {1}")]
+    #[error("\"{0}\" -- IO error: {1}")]
     IoError(PathBuf, std::io::Error),
 }
 pub type Result<T> = std::result::Result<T, Error>;

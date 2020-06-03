@@ -46,12 +46,13 @@ struct Cli {
 fn main() {
     let cli = Cli::from_args();
 
+    // Select preprocessor
     let preprocessor: Option<Box<dyn Preprocessor>> = match cli.preprocessor.as_ref() {
         "asm" => Some(Box::new(AsmPreprocessor::new())),
         "text" => Some(Box::new(TextPreprocessor::new())),
         "none" => None,
         other => {
-            eprintln!("`{}` is not a valid value for preprocessor", other);
+            eprintln!("\"{}\" is not a valid value for preprocessor", other);
             process::exit(1);
         }
     };
@@ -61,7 +62,7 @@ fn main() {
     for result in &resava.run(preprocessor.as_deref()) {
         match result {
             Ok((target, score)) => {
-                println!("`{}` : {:.2}%", target.display(), score * 100.);
+                println!("\"{}\" : {:.2}%", target.display(), score * 100.);
             }
             Err(e) => {
                 eprintln!("{}", e);
