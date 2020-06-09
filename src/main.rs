@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use ignore::Walk;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use structopt::StructOpt;
 
@@ -48,28 +48,10 @@ fn main() {
     let cli = Cli::from_args();
 
     // Select preprocessor
-    let preprocessor: Option<Box<dyn Preprocessor>> = match cli.preprocessor.as_ref() {
-        "asm" => Some(Box::new(AsmPreprocessor::new())),
-        "text" => Some(Box::new(TextPreprocessor::new())),
-        "none" => None,
-        other => {
-            eprintln!("\"{}\" is not a valid value for preprocessor", other);
-            process::exit(1);
-        }
-    };
+    let preprocessor = get_preprocessor(&cli.preprocessor);
 
     // Walk directories recursively
-    let targets: Vec<_> = cli
-        .targets
-        .into_iter()
-        .flat_map(|path| {
-            Walk::new(path)
-                .into_iter()
-                .filter_map(|entry| entry.ok())
-                .filter(|entry| entry.file_type().map_or(false, |e| e.is_file()))
-                .map(|entry| entry.into_path())
-        })
-        .collect();
+    let targets = walk_directories(&cli.targets);
 
     let resava = Resava::new(cli.source, targets, cli.similarity / 100.);
 
@@ -83,4 +65,28 @@ fn main() {
             }
         }
     }
+}
+
+fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor>> {
+    match pp {
+        "asm" => Some(Box::new(AsmPreprocessor::new())),
+        "text" => Some(Box::new(TextPreprocessor::new())),
+        "none" => None,
+        other => {
+            eprintln!("\"{}\" is not a valid value for preprocessor", other);
+            process::exit(1);
+        }
+    }
+}
+
+fn walk_directories<P: AsRef<Path>>(paths: &[P]) -> Vec<PathBuf> {
+    paths
+        .iter()
+        .flat_map(|path| {
+            Walk::new(path)
+                .filter_map(|entry| entry.ok())
+                .filter(|entry| entry.file_type().map_or(false, |e| e.is_file()))
+                .map(|entry| entry.into_path())
+        })
+        .collect()
 }
