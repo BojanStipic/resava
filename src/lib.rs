@@ -75,8 +75,6 @@ fn parse_content<P: AsRef<Path>, PP: Preprocessor + ?Sized>(
             Some(pp) => Ok(pp.process(&content)),
             None => Ok(content),
         },
-        Err(e) => {
-            return Err(Error::IoError(path.as_ref().to_owned(), e));
-        }
+        Err(e) => Err(Error::IoError(path.as_ref().to_owned(), e)),
     }
 }
