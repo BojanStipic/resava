@@ -20,7 +20,6 @@ use std::process;
 use structopt::StructOpt;
 
 use resava::preprocessors::{AsmPreprocessor, Preprocessor, TextPreprocessor};
-use resava::Resava;
 
 /// Plagiarism detection for source code
 #[derive(StructOpt, Debug)]
@@ -53,16 +52,15 @@ fn main() {
     // Walk directories recursively
     let targets = walk_directories(&cli.targets);
 
-    let resava = Resava::new(cli.source, targets, cli.similarity / 100.);
-
-    for result in &resava.run(preprocessor.as_deref()) {
+    for result in resava::detect(&cli.source, &targets, preprocessor.as_deref()) {
         match result {
-            Ok((target, score)) => {
+            Ok((target, score)) if score >= cli.similarity / 100. => {
                 println!("\"{}\" : {:.2}%", target.display(), score * 100.);
             }
             Err(e) => {
                 eprintln!("{}", e);
             }
+            _ => {}
         }
     }
 }

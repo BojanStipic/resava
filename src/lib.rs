@@ -28,63 +28,41 @@ pub enum Error {
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug)]
-pub struct Resava {
-    source: PathBuf,
-    targets: Vec<PathBuf>,
-    similarity: f64,
+/// Compare `source` to all `targets` and return target with their similarity score
+pub fn detect<P1: AsRef<Path> + Eq, P2: AsRef<Path> + Eq, PP: Preprocessor + ?Sized>(
+    source: P1,
+    targets: &[P2],
+    preprocessor: Option<&PP>,
+) -> Vec<Result<(PathBuf, f64)>> {
+    let source_content = match parse_content(&source, preprocessor) {
+        Ok(content) => content,
+        Err(e) => {
+            return vec![Err(e)];
+        }
+    };
+
+    let targets: Vec<&Path> = targets.iter().map(AsRef::as_ref).collect();
+    targets
+        .into_iter()
+        .map(|target| parse_content(target, preprocessor).map(|content| (target, content)))
+        .map(|result| {
+            result.map(|(target, target_content)| {
+                (
+                    target.to_owned(),
+                    similarity(&source_content, &target_content),
+                )
+            })
+        })
+        .collect()
 }
 
-impl Resava {
-    pub fn new(source: PathBuf, targets: Vec<PathBuf>, similarity: f64) -> Self {
-        Self {
-            source,
-            targets,
-            similarity,
-        }
-    }
-
-    pub fn run<P: Preprocessor + ?Sized>(
-        &self,
-        preprocessor: Option<&P>,
-    ) -> Vec<Result<(&Path, f64)>> {
-        let mut results = Vec::new();
-
-        let source_content = match parse_file(&self.source, preprocessor) {
-            Ok(content) => content,
-            Err(e) => {
-                results.push(Err(e));
-                return results;
-            }
-        };
-
-        for target in &self.targets {
-            // Don't compare source with itself
-            if target == &self.source {
-                continue;
-            }
-
-            let target_content = match parse_file(&target, preprocessor) {
-                Ok(content) => content,
-                Err(e) => {
-                    results.push(Err(e));
-                    continue;
-                }
-            };
-
-            let score = strsim::normalized_levenshtein(&source_content, &target_content);
-            if score >= self.similarity {
-                results.push(Ok((target.as_path(), score)));
-            }
-        }
-
-        results
-    }
+fn similarity(a: &str, b: &str) -> f64 {
+    strsim::normalized_levenshtein(a, b)
 }
 
-fn parse_file<T: AsRef<Path>, U: Preprocessor + ?Sized>(
-    path: T,
-    preprocessor: Option<&U>,
+fn parse_content<P: AsRef<Path>, PP: Preprocessor + ?Sized>(
+    path: P,
+    preprocessor: Option<&PP>,
 ) -> Result<String> {
     match fs::read_to_string(&path) {
         Ok(content) => match preprocessor {
