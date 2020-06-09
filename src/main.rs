@@ -39,19 +39,22 @@ struct Cli {
 
     /// Source file to check for plagiarism.
     source: PathBuf,
-    /// Targets to compare against source file.
+    /// Targets to compare against the source file.
+    /// If directories are specified as targets, they are searched recursively.
+    #[structopt(default_value = "./")]
     targets: Vec<PathBuf>,
 }
 
 fn main() {
     let cli = Cli::from_args();
 
-    // Select preprocessor
-    let preprocessor = get_preprocessor(&cli.preprocessor);
-
     // Walk directories recursively
     let targets = walk_directories(&cli.targets);
 
+    // Select preprocessor
+    let preprocessor = get_preprocessor(&cli.preprocessor);
+
+    // Detect plagiarism
     for result in resava::detect(&cli.source, &targets, preprocessor.as_deref()) {
         match result {
             Ok((target, score)) if score >= cli.similarity / 100. => {

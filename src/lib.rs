@@ -29,7 +29,7 @@ pub enum Error {
 }
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Compare `source` to all `targets` and return target with their similarity score
+/// Compare `source` to all `targets` and return `targets` with their similarity score
 pub fn detect<
     P1: AsRef<Path> + Eq + Sync,
     P2: AsRef<Path> + Eq,
@@ -62,10 +62,12 @@ pub fn detect<
         .collect()
 }
 
+/// Calculates strings similarity score
 fn similarity(a: &str, b: &str) -> f64 {
     strsim::normalized_levenshtein(a, b)
 }
 
+/// Returns the contents of a file and runs a preprocessor
 fn parse_content<P: AsRef<Path>, PP: Preprocessor + ?Sized>(
     path: P,
     preprocessor: Option<&PP>,

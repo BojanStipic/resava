@@ -66,7 +66,8 @@ ARGS:
             Source file to check for plagiarism
 
     <targets>...
-            Targets to compare against source file
+            Targets to compare against the source file. If directories are specified as targets, they are searched
+            recursively [default: ./]
 ```
 
 ## License
