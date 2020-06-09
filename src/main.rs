@@ -65,7 +65,7 @@ fn main() {
     }
 }
 
-fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor>> {
+fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor + Sync>> {
     match pp {
         "asm" => Some(Box::new(AsmPreprocessor::new())),
         "text" => Some(Box::new(TextPreprocessor::new())),

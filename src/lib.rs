@@ -16,6 +16,7 @@
 
 pub mod preprocessors;
 
+use rayon::prelude::*;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -29,7 +30,7 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Compare `source` to all `targets` and return target with their similarity score
-pub fn detect<P1: AsRef<Path> + Eq, P2: AsRef<Path> + Eq, PP: Preprocessor + ?Sized>(
+pub fn detect<P1: AsRef<Path> + Eq, P2: AsRef<Path> + Eq, PP: Preprocessor + ?Sized + Sync>(
     source: P1,
     targets: &[P2],
     preprocessor: Option<&PP>,
@@ -43,7 +44,7 @@ pub fn detect<P1: AsRef<Path> + Eq, P2: AsRef<Path> + Eq, PP: Preprocessor + ?Si
 
     let targets: Vec<&Path> = targets.iter().map(AsRef::as_ref).collect();
     targets
-        .into_iter()
+        .into_par_iter()
         .map(|target| parse_content(target, preprocessor).map(|content| (target, content)))
         .map(|result| {
             result.map(|(target, target_content)| {
