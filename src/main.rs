@@ -84,7 +84,13 @@ fn walk_directories<P: AsRef<Path>>(paths: &[P]) -> Vec<PathBuf> {
         .iter()
         .flat_map(|path| {
             Walk::new(path)
-                .filter_map(|entry| entry.ok())
+                .inspect(|entry| {
+                    if let Err(e) = entry {
+                        eprintln!("{}", e);
+                    }
+                })
+                .filter_map(Result::ok)
+                // Filter: only files; ignore directories
                 .filter(|entry| entry.file_type().map_or(false, |e| e.is_file()))
                 .map(|entry| entry.into_path())
         })
