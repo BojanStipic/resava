@@ -11,6 +11,7 @@ Plagiarism is detected using the following steps:
     * Letter case normalization
     * Language dependent preprocessing. Currently supported languages:
         * x86 GAS assembly
+        * C programming language
 2. Similarity check using string metric algorithm. Currently supported algorithms:
     * Normalized [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
 
@@ -52,11 +53,11 @@ OPTIONS:
     -p, --preprocessor <preprocessor>
             File preprocessor to use.
 
-            Possible values:
-             * "asm": x86 GAS assembly
-             * "text": Basic text preprocessing
-             * "none": Disable preprocessing
-             [default: asm]
+            * "asm": x86 GAS assembly
+            * "c": C programming language
+            * "text": Basic text preprocessing
+            * "none": Disable preprocessing
+             [default: asm]  [possible values: asm, c, text, none]
     -s, --similarity <similarity>
             Only show files with specified similarity percentage [default: 80]
 

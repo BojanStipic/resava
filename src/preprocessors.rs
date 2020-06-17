@@ -66,3 +66,31 @@ impl Preprocessor for AsmPreprocessor {
         self.text_preprocessor.process(&input)
     }
 }
+
+/// C language preprocessor.
+///
+/// * Removes comments
+/// * … Everything else that the basic TextPreprocessor does
+pub struct CPreprocessor {
+    line_comment: Regex,
+    multi_comment: Regex,
+    text_preprocessor: TextPreprocessor,
+}
+
+impl CPreprocessor {
+    pub fn new() -> Self {
+        Self {
+            line_comment: Regex::new(r"(?m)//.*$").unwrap(),
+            multi_comment: Regex::new(r"(?s)/\*.*?\*/").unwrap(),
+            text_preprocessor: TextPreprocessor::new(),
+        }
+    }
+}
+
+impl Preprocessor for CPreprocessor {
+    fn process(&self, input: &str) -> String {
+        let input = self.line_comment.replace_all(input, "");
+        let input = self.multi_comment.replace_all(&input, "");
+        self.text_preprocessor.process(&input)
+    }
+}

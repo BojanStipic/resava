@@ -19,7 +19,7 @@ use std::path::{Path, PathBuf};
 use std::process;
 use structopt::StructOpt;
 
-use resava::preprocessors::{AsmPreprocessor, Preprocessor, TextPreprocessor};
+use resava::preprocessors::{AsmPreprocessor, CPreprocessor, Preprocessor, TextPreprocessor};
 
 /// Plagiarism detection for source code
 #[derive(StructOpt, Debug)]
@@ -32,6 +32,7 @@ struct Cli {
     ///
     /// Possible values: {n}
     /// * "asm": x86 GAS assembly {n}
+    /// * "c": C programming language {n}
     /// * "text": Basic text preprocessing {n}
     /// * "none": Disable preprocessing {n}
     #[structopt(short, long, default_value = "asm")]
@@ -71,6 +72,7 @@ fn main() {
 fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor + Sync>> {
     match pp {
         "asm" => Some(Box::new(AsmPreprocessor::new())),
+        "c" => Some(Box::new(CPreprocessor::new())),
         "text" => Some(Box::new(TextPreprocessor::new())),
         "none" => None,
         other => {
