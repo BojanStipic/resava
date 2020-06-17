@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+//! Module that defines available input preprocessors.
+
 use regex::Regex;
 
+/// Main trait in this module that every preprocessor implements.
 pub trait Preprocessor {
+    /// Runs a preprocessor on the `input` and returns a new String.
     fn process(&self, input: &str) -> String;
 }
 
@@ -45,7 +49,7 @@ impl Preprocessor for TextPreprocessor {
 /// x86 GAS assembly preprocessor.
 ///
 /// * Removes comments
-/// * … Everything else that basic TextPreprocessor does
+/// * … Everything else that the basic TextPreprocessor does
 pub struct AsmPreprocessor {
     comment: Regex,
     text_preprocessor: TextPreprocessor,

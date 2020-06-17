@@ -23,6 +23,7 @@ use resava::preprocessors::{AsmPreprocessor, CPreprocessor, Preprocessor, TextPr
 
 /// Plagiarism detection for source code
 #[derive(StructOpt, Debug)]
+#[structopt(set_term_width = 80)]
 struct Cli {
     /// Only show files with specified similarity percentage.
     #[structopt(short, long, default_value = "80")]
@@ -30,10 +31,9 @@ struct Cli {
 
     /// File preprocessor to use.
     ///
-    /// Possible values: {n}
-    /// * "asm": x86 GAS assembly {n}
-    /// * "c": C programming language {n}
-    /// * "text": Basic text preprocessing {n}
+    /// * "asm": x86 GAS assembly
+    /// * "c": C programming language
+    /// * "text": Basic text preprocessing
     /// * "none": Disable preprocessing {n}
     #[structopt(short, long, default_value = "asm")]
     preprocessor: String,
@@ -41,7 +41,7 @@ struct Cli {
     /// Source file to check for plagiarism.
     source: PathBuf,
     /// Targets to compare against the source file.
-    /// If directories are specified as targets, they are searched recursively.
+    /// If a target is a directory, it is searched recursively.
     #[structopt(default_value = "./")]
     targets: Vec<PathBuf>,
 }
