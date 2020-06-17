@@ -16,7 +16,6 @@
 
 use ignore::Walk;
 use std::path::{Path, PathBuf};
-use std::process;
 use structopt::StructOpt;
 
 use resava::preprocessors::{AsmPreprocessor, CPreprocessor, Preprocessor, TextPreprocessor};
@@ -35,7 +34,13 @@ struct Cli {
     /// * "c": C programming language
     /// * "text": Basic text preprocessing
     /// * "none": Disable preprocessing {n}
-    #[structopt(short, long, default_value = "asm")]
+    #[structopt(
+        short,
+        long,
+        default_value = "asm",
+        possible_values = &["asm", "c", "text", "none"],
+        verbatim_doc_comment,
+    )]
     preprocessor: String,
 
     /// Source file to check for plagiarism.
@@ -75,10 +80,7 @@ fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor + Sync>> {
         "c" => Some(Box::new(CPreprocessor::new())),
         "text" => Some(Box::new(TextPreprocessor::new())),
         "none" => None,
-        other => {
-            eprintln!("\"{}\" is not a valid value for preprocessor", other);
-            process::exit(1);
-        }
+        _ => unreachable!(),
     }
 }
 
