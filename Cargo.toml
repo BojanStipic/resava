@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 structopt = "0.3.23"
-thiserror = "1.0.28"
+thiserror = "1.0.29"
 regex = "1.5.4"
 strsim = "0.10.0"
 ignore = "0.4.18"
