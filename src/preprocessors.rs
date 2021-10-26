@@ -40,6 +40,12 @@ impl TextPreprocessor {
     }
 }
 
+impl Default for TextPreprocessor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Preprocessor for TextPreprocessor {
     fn process(&self, input: &str) -> String {
         self.whitespace.replace_all(input, " ").to_lowercase()
@@ -61,6 +67,12 @@ impl AsmPreprocessor {
             comment: Regex::new(r"(?m)#.*$").unwrap(),
             text_preprocessor: TextPreprocessor::new(),
         }
+    }
+}
+
+impl Default for AsmPreprocessor {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -88,6 +100,12 @@ impl CPreprocessor {
             multi_comment: Regex::new(r"(?s)/\*.*?\*/").unwrap(),
             text_preprocessor: TextPreprocessor::new(),
         }
+    }
+}
+
+impl Default for CPreprocessor {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
