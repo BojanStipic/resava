@@ -2,6 +2,8 @@
 
 Plagiarism detection for source code.
 
+[![CI](https://github.com/BojanStipic/resava/actions/workflows/ci.yml/badge.svg)](https://github.com/BojanStipic/resava/actions/workflows/ci.yml)
+
 ## Plagiarism detection
 
 Plagiarism is detected using the following steps:
