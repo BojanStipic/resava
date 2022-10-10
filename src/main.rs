@@ -14,45 +14,51 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use clap::{Parser, ValueEnum};
 use ignore::Walk;
 use std::path::{Path, PathBuf};
-use structopt::StructOpt;
 
 use resava::preprocessors::{AsmPreprocessor, CPreprocessor, Preprocessor, TextPreprocessor};
 
 /// Plagiarism detection for source code
-#[derive(StructOpt, Debug)]
-#[structopt(set_term_width = 80)]
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 struct Cli {
     /// Only show files with specified similarity percentage.
-    #[structopt(short, long, default_value = "80")]
+    #[arg(short, long, default_value_t = 80.)]
     similarity: f64,
 
     /// File preprocessor to use.
-    ///
-    /// * "asm": x86 GAS assembly
-    /// * "c": C programming language
-    /// * "text": Basic text preprocessing
-    /// * "none": Disable preprocessing {n}
-    #[structopt(
+    #[arg(
         short,
         long,
-        default_value = "asm",
-        possible_values = &["asm", "c", "text", "none"],
-        verbatim_doc_comment,
+        default_value_t = PreprocessorArg::Asm,
+        value_enum,
     )]
-    preprocessor: String,
+    preprocessor: PreprocessorArg,
 
     /// Source file to check for plagiarism.
     source: PathBuf,
     /// Targets to compare against the source file.
     /// If a target is a directory, it is searched recursively.
-    #[structopt(default_value = "./")]
+    #[arg(default_value = "./")]
     targets: Vec<PathBuf>,
 }
 
+#[derive(ValueEnum, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+enum PreprocessorArg {
+    /// x86 GAS assembly
+    Asm,
+    /// C programming language
+    C,
+    /// Basic text preprocessing
+    Text,
+    /// Disable preprocessing
+    None,
+}
+
 fn main() {
-    let cli = Cli::from_args();
+    let cli = Cli::parse();
 
     // Walk directories recursively
     let targets = walk_directories(&cli.targets);
@@ -74,13 +80,12 @@ fn main() {
     }
 }
 
-fn get_preprocessor(pp: &str) -> Option<Box<dyn Preprocessor + Sync>> {
+fn get_preprocessor(pp: &PreprocessorArg) -> Option<Box<dyn Preprocessor + Sync>> {
     match pp {
-        "asm" => Some(Box::new(AsmPreprocessor::new())),
-        "c" => Some(Box::new(CPreprocessor::new())),
-        "text" => Some(Box::new(TextPreprocessor::new())),
-        "none" => None,
-        _ => unreachable!(),
+        PreprocessorArg::Asm => Some(Box::new(AsmPreprocessor::new())),
+        PreprocessorArg::C => Some(Box::new(CPreprocessor::new())),
+        PreprocessorArg::Text => Some(Box::new(TextPreprocessor::new())),
+        PreprocessorArg::None => None,
     }
 }
 

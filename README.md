@@ -40,37 +40,39 @@ cargo install --path .
 ## Usage
 
 ```
-USAGE:
-    resava [OPTIONS] <source> [targets]...
+Usage: resava [OPTIONS] <SOURCE> [TARGETS]...
 
-FLAGS:
-    -h, --help
-            Prints help information
+Arguments:
+  <SOURCE>
+          Source file to check for plagiarism
 
-    -V, --version
-            Prints version information
+  [TARGETS]...
+          Targets to compare against the source file. If a target is a directory, it is searched recursively
 
+          [default: ./]
 
-OPTIONS:
-    -p, --preprocessor <preprocessor>
-            File preprocessor to use.
+Options:
+  -s, --similarity <SIMILARITY>
+          Only show files with specified similarity percentage
 
-            * "asm": x86 GAS assembly
-            * "c": C programming language
-            * "text": Basic text preprocessing
-            * "none": Disable preprocessing
-             [default: asm]  [possible values: asm, c, text, none]
-    -s, --similarity <similarity>
-            Only show files with specified similarity percentage [default: 80]
+          [default: 80]
 
+  -p, --preprocessor <PREPROCESSOR>
+          File preprocessor to use
 
-ARGS:
-    <source>
-            Source file to check for plagiarism
+          [default: asm]
 
-    <targets>...
-            Targets to compare against the source file. If a target is a
-            directory, it is searched recursively [default: ./]
+          Possible values:
+          - asm:  x86 GAS assembly
+          - c:    C programming language
+          - text: Basic text preprocessing
+          - none: Disable preprocessing
+
+  -h, --help
+          Print help information (use `-h` for a summary)
+
+  -V, --version
+          Print version information
 ```
 
 ## License
