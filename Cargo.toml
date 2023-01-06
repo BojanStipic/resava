@@ -11,5 +11,5 @@ clap = { version = "4.0.32", features = ["derive", "wrap_help"] }
 thiserror = "1.0.38"
 regex = "1.7.0"
 strsim = "0.10.0"
-ignore = "0.4.18"
+ignore = "0.4.19"
 rayon = "1.6.1"
