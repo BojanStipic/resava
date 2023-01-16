@@ -1,0 +1,8 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", "group:allNonMajor", ":automergeMinor"],
+  "labels": ["dependencies"],
+  "schedule": ["after 11am on the first day of the month"],
+  "prHourlyLimit": 0,
+  "rangeStrategy": "bump"
+}
