@@ -73,7 +73,7 @@ fn main() {
                 println!("\"{}\" : {:.2}%", target.display(), score * 100.);
             }
             Err(e) => {
-                eprintln!("{}", e);
+                eprintln!("{e}");
             }
             _ => {}
         }
@@ -96,7 +96,7 @@ fn walk_directories<P: AsRef<Path>>(paths: &[P]) -> Vec<PathBuf> {
             Walk::new(path)
                 .inspect(|entry| {
                     if let Err(e) = entry {
-                        eprintln!("{}", e);
+                        eprintln!("{e}");
                     }
                 })
                 .filter_map(Result::ok)
