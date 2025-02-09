@@ -100,8 +100,7 @@ fn walk_directories<P: AsRef<Path>>(paths: &[P]) -> Vec<PathBuf> {
                     }
                 })
                 .filter_map(Result::ok)
-                // Filter: only files; ignore directories
-                .filter(|entry| entry.file_type().map_or(false, |e| e.is_file()))
+                .filter(|entry| entry.file_type().is_some_and(|e| e.is_file()))
                 .map(|entry| entry.into_path())
         })
         .collect()
