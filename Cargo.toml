@@ -9,7 +9,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.6.1", features = ["derive", "wrap_help"] }
 thiserror = "2.0.18"
-regex = "1.12.3"
+regex = "1.12.4"
 strsim = "0.11.1"
-ignore = "0.4.25"
+ignore = "0.4.26"
 rayon = "1.12.0"
